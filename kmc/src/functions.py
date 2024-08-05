@@ -5,7 +5,7 @@ import random
 K_CHEBYSHEV = np.inf
 
 # decimal places in output
-K_DECIMAL_PLACES = 3
+K_DECIMAL_PLACES = 6
 
 # k parameter for the k-means clustering algorithms
 K_PARAMETER = 5
@@ -33,6 +33,36 @@ def readPoints(file):
             return "Invalid format!"
     
     return points
+
+# reads data from the UCI datasets in standard format and returns it, along with the number of classes (clusters)
+def readUCI(file):
+    data = []
+    classes = set()
+
+    for line in file:
+        remaining_line = line.strip()
+        instance_class = None
+        instance = []
+
+        while ',' in remaining_line:
+            comma_index = remaining_line.index(',')
+            attribute = remaining_line[:comma_index]
+            remaining_line = remaining_line[comma_index + 1:]
+
+            if instance_class is None:
+                instance_class = attribute
+                classes.add(instance_class)
+            else:
+                if len(attribute) == 0:
+                    attribute = 0
+                attribute = float(attribute)
+                instance.append(round(attribute, K_DECIMAL_PLACES))
+        
+        instance.append(float(remaining_line))
+        data.append(tuple(instance))
+
+    print (f'classes = {classes}\n')
+    return data, len(classes)
 
 # prints the given table, formated
 # distances are rounded to 3 decimal places
