@@ -1,11 +1,12 @@
-import numpy as np
+from constants import *
 import random
+import numpy as np
 
 # constant for Chebyshev distance
 K_CHEBYSHEV = np.inf
 
 # decimal places in output
-K_DECIMAL_PLACES = 6
+K_DECIMAL_PLACES = 3
 
 # k parameter for the k-means clustering algorithms
 K_PARAMETER = 5
@@ -14,10 +15,18 @@ K_PARAMETER = 5
 K_NUMBER_OF_TESTS = 30
 
 # depth of recursion in the binary search version of the algorithm
-K_BINARY_SEARCH_DEPTH = 10
+K_BINARY_SEARCH_DEPTH = 4
 
 # enables and disables output of tests
 K_TEST_OUTPUT_ENABLED = False
+
+# enables the generation of distance tables
+# if disabled, the table is read from a file, greatly reducing runtime
+K_ENABLE_TABLE_GENERATION = True
+
+# enables writing the table to an appropriate file
+# if table generation is disabled, this also gets disabled
+K_ENABLE_WRITING = True
 
 # reads points from file and returns a list of them in (x, y) format
 def readPoints(file):
@@ -35,7 +44,9 @@ def readPoints(file):
     return points
 
 # reads data from the UCI datasets in standard format and returns it, along with the number of classes (clusters)
-def readUCI(file):
+# its only parameter is folder name, so it reads the contents of uci-datasets/folder_name/data.csv
+def readUciFile(folder_name):
+    file = open(r'uci-datasets/' + folder_name + r'/data.csv')
     data = []
     classes = set()
 
@@ -61,8 +72,55 @@ def readUCI(file):
         instance.append(float(remaining_line))
         data.append(tuple(instance))
 
-    print (f'classes = {classes}\n')
     return data, len(classes)
+
+# due to some tables taking a few minutes to generate, the tables are stored since they are always the same
+# since only the minkowski distance for p = 1 and p = 2 are required, they're the only ones stored by default
+def readUciTable(folder_name, p):
+    file = open(r'uci-datasets/' + folder_name + rf'/table-{p}.csv', mode='r')
+    table = []
+
+    for i, line in enumerate(file):
+        remaining_line = line.strip()
+        row = []
+
+        for j in range(i):
+            row.append(table[j][i])
+
+        row.append(0)
+        while ',' in remaining_line:
+            comma_index = remaining_line.index(',')
+            distance = float(remaining_line[:comma_index])
+            remaining_line = remaining_line[comma_index + 1:]
+            row.append(round(distance, K_DECIMAL_PLACES))
+        
+        row.append(float(remaining_line))
+        table.append(row)
+    
+    row = []
+    for i in range(len(table)):
+        row.append(table[i][-1])
+    row.append(0)
+    table.append(row)
+    
+    file.close()
+    return table
+
+# writes the table in the file uci-datasets/folder_name/table-p.csv
+def writeUciTable(table, folder_name, p):
+    file = open(r'uci-datasets/' + folder_name + rf'/table-{p}.csv', mode='w')
+    number_of_points = len(table)
+
+    for i in range(number_of_points - 1):
+        row = []
+
+        for j in range(i + 1, number_of_points):
+            distance = round(table[i][j], K_DECIMAL_PLACES)
+            row.append(str(distance))
+        
+        file.write(','.join(row) + '\n')
+    
+    file.close()
 
 # prints the given table, formated
 # distances are rounded to 3 decimal places
@@ -109,7 +167,7 @@ def minkowskiDistance(a, b, p):
     return distance
 
 # returns a table containing the Minkowski distance of order p between any two points in the given list
-def distanceTable(points, p):
+def generateDistanceTable(points, p):
     table = []
     length = len(points)
 
@@ -127,7 +185,7 @@ def distanceTable(points, p):
                 row.append(table[j][i])
 
             else:
-                d = minkowskiDistance(a, b, p)
+                d = minkowskiDistance(a, b, p).item()
                 row.append(d)
         
         table.append(row)
