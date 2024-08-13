@@ -3,15 +3,19 @@ from sklearn.metrics import silhouette_score, adjusted_rand_score
 from sklearn.cluster import KMeans
 import time
 
-p = 1
+p = None
 metric = None
 if p == 1:
     metric = 'manhattan'
 elif p == 2:
     metric = 'euclidean'
 
-folder_name = r'datasets/sk-generated/set-10'
+# set the folder's name to retrieve the data stored in folder_name/data.csv
+folder_name = None
 data, true_labels, k = readDataset(folder_name)
+if data is None:
+    exit()
+
 print (f"The data contains {len(data)} instances, each with {len(data[0])} attributes, distributed among {k} classes")
 
 if K_ENABLE_CALCULATIONS:
@@ -96,4 +100,5 @@ if K_ENABLE_CALCULATIONS:
 else:
     print (rf'Analyzing results stored in {folder_name}/results-p{p}.csv')
 
-analyzeResults(folder_name, p)
+if K_ENABLE_ANALYSIS:
+    analyzeResults(folder_name, p)

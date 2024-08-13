@@ -1,24 +1,28 @@
-from constants import *
+import numpy as np
 import random
 
-# reads points from file and returns a list of them in (x, y) format
-def readPoints(file):
-    points = []
+# constant for Chebyshev distance
+K_CHEBYSHEV = np.inf
 
-    for line in file:
-        try:
-            space_index = line.find(" ")
-            x_coord = float(line[:space_index])
-            y_coord = float(line[space_index + 1:])
-            points.append((x_coord, y_coord))
-        except:
-            return "Invalid format!"
-    
-    return points
+# decimal places in output
+K_DECIMAL_PLACES = 3
+
+# number of tests performed for each algorithm
+K_NUMBER_OF_TESTS = 30
+
+# enables the generation of the distance table and execution of clustering algorithms
+K_ENABLE_CALCULATIONS = False
+
+# enables the analysis and output of results in folder_name/results.csv
+K_ENABLE_ANALYSIS = True
 
 # reads data from datasets in CSV format and returns it, along with the number of classes (clusters)
 # its only parameter is folder name, so it reads the contents of folder_name/data.csv
 def readDataset(folder_name):
+    if folder_name is None:
+        print ("No files were specified for reading!")
+        return None, None, None
+
     file = open(folder_name + r'/data.csv')
     data = []
     true_labels = []
@@ -58,6 +62,14 @@ def readDataset(folder_name):
 # due to some tables taking a few minutes to calculate, the tables were stored for testing
 # some of these tables were larger than 100mb, not really feasible to maintain
 def readUciTable(folder_name, p):
+    if folder_name is None:
+        print ("No files were specified for reading!")
+        return None
+
+    if p is None:
+        print ("No p value was specified!")
+        return None
+
     file = open(folder_name + rf'/table-{p}.csv', mode='r')
     table = []
 
@@ -89,6 +101,14 @@ def readUciTable(folder_name, p):
 
 # stores the distance table, to avoid future calculations
 def writeUciTable(table, folder_name, p):
+    if folder_name is None:
+        print ("No files were specified for reading!")
+        return None
+
+    if p is None:
+        print ("No p value was specified!")
+        return None
+
     file = open(folder_name + rf'/table-{p}.csv', mode='w')
     number_of_points = len(table)
 
