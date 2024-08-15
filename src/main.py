@@ -2,8 +2,15 @@ from functions import *
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 from sklearn.cluster import KMeans
 import time
+import matplotlib.pyplot as plt
 
+# set the desired p-value for minkowski distance
+# set p = K_CHEBYSHEV for Chebyshev distance
 p = None
+if p is None:
+    print ("You must specify a p-value")
+    exit()
+
 metric = None
 if p == 1:
     metric = 'manhattan'
@@ -12,10 +19,11 @@ elif p == 2:
 
 # set the folder's name to retrieve the data stored in folder_name/data.csv
 folder_name = None
-data, true_labels, k = readDataset(folder_name)
-if data is None:
+if folder_name is None:
+    print ("You must specify a file")
     exit()
 
+data, true_labels, k = readDataset(folder_name)
 print (f"The data contains {len(data)} instances, each with {len(data[0])} attributes, distributed among {k} classes")
 
 if K_ENABLE_CALCULATIONS:
@@ -94,11 +102,8 @@ for i in range(K_NUMBER_OF_TESTS):
 
 if K_ENABLE_CALCULATIONS:
     print ('K-Means tests done')
-
     result_file.write('\n')
     result_file.close()
-else:
+elif K_ENABLE_ANALYSIS:
     print (rf'Analyzing results stored in {folder_name}/results-p{p}.csv')
-
-if K_ENABLE_ANALYSIS:
     analyzeResults(folder_name, p)

@@ -354,13 +354,20 @@ def analyzeResults(folder_name, p):
             silhouettes.append(float(results[7]))
         
         else:
+            index = 1
+            avg_radius = round(sum(radii) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)
+            avg_rand = round(sum(rands) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)
+            avg_silhouette = round(sum(silhouettes) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)
+            avg_time = round(sum(times) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)
+
             print (f"\n{algorithms[results[0]]} Algorithm:")
 
             if results[0] == 'bs':
                 depth = int(results[3])
+                index += depth * 4 - 8
                 print (f"Search depth: {depth} / Interval size: {round(1 / (2 ** depth), K_DECIMAL_PLACES) * 100}%")
 
-            print (f"   - Average radius: {round(sum(radii) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)}")
-            print (f"   - Average adjusted Rand index: {round(sum(rands) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)}")
-            print (f"   - Average Silhouette coefficient: {round(sum(silhouettes) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)}")
-            print (f"   - Average runtime: {round(sum(times) / K_NUMBER_OF_TESTS, K_DECIMAL_PLACES)} seconds")
+            print (f"   - Average radius: {avg_radius}")
+            print (f"   - Average adjusted Rand index: {avg_rand}")
+            print (f"   - Average Silhouette coefficient: {avg_silhouette}")
+            print (f"   - Average runtime: {avg_time} seconds")
