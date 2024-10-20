@@ -4,8 +4,6 @@ from sklearn.cluster import KMeans
 import time
 import matplotlib.pyplot as plt
 
-# set the desired p-value for minkowski distance
-# set p = K_CHEBYSHEV for Chebyshev distance
 p = None
 if p is None:
     print ("You must specify a p-value")
@@ -17,7 +15,6 @@ if p == 1:
 elif p == 2:
     metric = 'euclidean'
 
-# set the folder's name to retrieve the data stored in folder_name/data.csv
 folder_name = None
 if folder_name is None:
     print ("You must specify a file")
@@ -38,7 +35,6 @@ if K_ENABLE_CALCULATIONS:
     result_file = open(folder_name + rf'/results-p{p}.csv', mode='w')
     result_file.write('algorithm,test-number,p,search-depth,max-radius,run-time,rand-index,silhouette-coefficient')
 
-# furthest-first tests
 for i in range(K_NUMBER_OF_TESTS):
     if not K_ENABLE_CALCULATIONS:
         break
@@ -57,7 +53,6 @@ for i in range(K_NUMBER_OF_TESTS):
 if K_ENABLE_CALCULATIONS:
     print ('\nFurthest-First tests done')
 
-# binary-search tests
 for d in range(2, 7):
     if not K_ENABLE_CALCULATIONS:
         break
@@ -82,7 +77,6 @@ for d in range(2, 7):
     
     print (f'Binary-Search (depth {d}) tests done')
 
-# k-means tests
 kmeans = KMeans(n_clusters=k)
 for i in range(K_NUMBER_OF_TESTS):
     if not K_ENABLE_CALCULATIONS:

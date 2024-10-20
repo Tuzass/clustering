@@ -16,8 +16,6 @@ K_ENABLE_CALCULATIONS = False
 # enables the analysis and output of results in folder_name/results.csv
 K_ENABLE_ANALYSIS = True
 
-# reads data from datasets in CSV format and returns it, along with the number of classes (clusters)
-# its only parameter is folder name, so it reads the contents of folder_name/data.csv
 def readDataset(folder_name):
     if folder_name is None:
         print ("No files were specified for reading!")
@@ -59,8 +57,6 @@ def readDataset(folder_name):
 
     return data, true_labels, len(classes)
 
-# due to some tables taking a few minutes to calculate, the tables were stored for testing
-# some of these tables were larger than 100mb, not really feasible to maintain
 def readUciTable(folder_name, p):
     if folder_name is None:
         print ("No files were specified for reading!")
@@ -99,7 +95,6 @@ def readUciTable(folder_name, p):
     file.close()
     return table
 
-# stores the distance table, to avoid future calculations
 def writeUciTable(table, folder_name, p):
     if folder_name is None:
         print ("No files were specified for reading!")
@@ -123,8 +118,6 @@ def writeUciTable(table, folder_name, p):
     
     file.close()
 
-# prints the given table, formated
-# the number of decimal places can be changed in the constants file
 def printTable(table):
     pad_size = 2
     n = len(table)
@@ -152,8 +145,6 @@ def printTable(table):
         str_row = [' ' * (max_length - len(d)) + d for d in str_row]
         print (' ' * (row_number_pad - len(str(i))) + str(i) + ' ' * pad_size + (' ' * pad_size).join(str_row))
 
-# returns the Minkowski distance or order p between points a and b
-# for Chebyshev distance, set p = K_CHEBYSHEV
 def minkowskiDistance(a, b, p):
     a = np.array(a)
     b = np.array(b)
@@ -167,7 +158,6 @@ def minkowskiDistance(a, b, p):
     
     return distance
 
-# returns a table containing the Minkowski distance of order p between any two points in the given list
 def generateDistanceTable(points, p):
     table = []
     length = len(points)
@@ -193,7 +183,6 @@ def generateDistanceTable(points, p):
 
     return table
 
-# returns the longest distance in the given table
 def getMaxDistance(table):
     longest = - np.inf
 
@@ -204,8 +193,6 @@ def getMaxDistance(table):
 
     return longest
 
-# returns the greatest distance from a point to its closest center
-# only works for FF or BS, since they reuse the distance table that's already been calculated
 def getMaxRadius(centers, table):
     max_distance = - np.inf
     number_of_points = len(table)
@@ -224,8 +211,6 @@ def getMaxRadius(centers, table):
 
     return max_distance
 
-# returns the greatest distance from a point to its closest center
-# works for all three algorithms, but it recalculates all distances
 def getKmMaxRadius(data, centers, p):
     max_distance = - np.inf
 
@@ -242,8 +227,6 @@ def getKmMaxRadius(data, centers, p):
 
     return max_distance
 
-# returns the set of centers
-# uses the algorithm that chooses the furthest point to continue
 def furthestFirst(table, k):
     number_of_points = len(table)
     points = list(range(number_of_points))
@@ -274,8 +257,6 @@ def furthestFirst(table, k):
     
     return centers
 
-# returns the set of centers
-# uses the algorithm that performs a binary search in the interval [lower_bound, upper_bound]
 def binarySearch(table, lower_bound, upper_bound, depth, k):
     centers = []
     number_of_points = len(table)
@@ -314,7 +295,6 @@ def binarySearch(table, lower_bound, upper_bound, depth, k):
 
     return [None]
 
-# finds the labels (closest center index) for each point
 def findLabels(table, centers):
     number_of_points = len(table)
     found_labels = []
@@ -327,7 +307,6 @@ def findLabels(table, centers):
     
     return found_labels
 
-# outputs the average of the tests stored in folder_name/results.csv
 def analyzeResults(folder_name, p):
     result_file = open(folder_name + rf'/results-p{p}.csv', mode='r')
     radii = []
